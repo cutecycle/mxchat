@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.CognitiveServices.Speech;
@@ -21,7 +21,10 @@ class Program
     {
         //Find your key and resource region under the 'Keys and Endpoint' tab in your Speech resource in Azure Portal
         //Remember to delete the brackets <> when pasting your key and region!
-        var speechConfig = SpeechConfig.FromSubscription("<paste-your-resource-key>" "<paste-your-region>");
+        var speechConfig = SpeechConfig.FromSubscription(
+        Environment.GetEnvironmentVariable("COGNITIVE_SERVICES_KEY"),
+            "eastus"
+            );
         await RecognizeFromMic(speechConfig);
     }
 }
