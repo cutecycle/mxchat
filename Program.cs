@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
+using System.Windows.Forms; //Dang i didn't know how fast we were gonna break dotnet core here
 
 class Program 
 {
@@ -15,6 +16,7 @@ class Program
         Console.WriteLine("Speak into your microphone.");
         var result = await recognizer.RecognizeOnceAsync();
         Console.WriteLine($"RECOGNIZED: Text={result.Text}");
+        Clipboard.SetClipBoard(result.Text);
     }
 
     async static Task Main(string[] args)
