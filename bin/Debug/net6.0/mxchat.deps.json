@@ -185,27 +185,27 @@
           "runtimes/win-x64/native/Microsoft.CognitiveServices.Speech.core.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.21.0.28"
           },
           "runtimes/win-x64/native/Microsoft.CognitiveServices.Speech.extension.audio.sys.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.21.0.28"
           },
           "runtimes/win-x64/native/Microsoft.CognitiveServices.Speech.extension.codec.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.21.0.28"
           },
           "runtimes/win-x64/native/Microsoft.CognitiveServices.Speech.extension.kws.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.21.0.28"
           },
           "runtimes/win-x64/native/Microsoft.CognitiveServices.Speech.extension.lu.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.21.0.28"
           },
           "runtimes/win-x64/native/Microsoft.CognitiveServices.Speech.extension.mas.dll": {
             "rid": "win-x64",
@@ -215,32 +215,32 @@
           "runtimes/win-x64/native/Microsoft.CognitiveServices.Speech.extension.silk_codec.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.21.0.28"
           },
           "runtimes/win-x86/native/Microsoft.CognitiveServices.Speech.core.dll": {
             "rid": "win-x86",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.21.0.28"
           },
           "runtimes/win-x86/native/Microsoft.CognitiveServices.Speech.extension.audio.sys.dll": {
             "rid": "win-x86",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.21.0.28"
           },
           "runtimes/win-x86/native/Microsoft.CognitiveServices.Speech.extension.codec.dll": {
             "rid": "win-x86",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.21.0.28"
           },
           "runtimes/win-x86/native/Microsoft.CognitiveServices.Speech.extension.kws.dll": {
             "rid": "win-x86",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.21.0.28"
           },
           "runtimes/win-x86/native/Microsoft.CognitiveServices.Speech.extension.lu.dll": {
             "rid": "win-x86",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.21.0.28"
           },
           "runtimes/win-x86/native/Microsoft.CognitiveServices.Speech.extension.mas.dll": {
             "rid": "win-x86",
@@ -250,27 +250,27 @@
           "runtimes/win-x86/native/Microsoft.CognitiveServices.Speech.extension.silk_codec.dll": {
             "rid": "win-x86",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.21.0.28"
           },
           "runtimes/win10-arm/native/Microsoft.CognitiveServices.Speech.core.dll": {
             "rid": "win10-arm",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.21.0.28"
           },
           "runtimes/win10-arm/native/Microsoft.CognitiveServices.Speech.extension.audio.sys.dll": {
             "rid": "win10-arm",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.21.0.28"
           },
           "runtimes/win10-arm/native/Microsoft.CognitiveServices.Speech.extension.kws.dll": {
             "rid": "win10-arm",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.21.0.28"
           },
           "runtimes/win10-arm/native/Microsoft.CognitiveServices.Speech.extension.lu.dll": {
             "rid": "win10-arm",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.21.0.28"
           },
           "runtimes/win10-arm/native/Microsoft.CognitiveServices.Speech.extension.mas.dll": {
             "rid": "win10-arm",
@@ -280,22 +280,22 @@
           "runtimes/win10-arm64/native/Microsoft.CognitiveServices.Speech.core.dll": {
             "rid": "win10-arm64",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.21.0.28"
           },
           "runtimes/win10-arm64/native/Microsoft.CognitiveServices.Speech.extension.audio.sys.dll": {
             "rid": "win10-arm64",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.21.0.28"
           },
           "runtimes/win10-arm64/native/Microsoft.CognitiveServices.Speech.extension.kws.dll": {
             "rid": "win10-arm64",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.21.0.28"
           },
           "runtimes/win10-arm64/native/Microsoft.CognitiveServices.Speech.extension.lu.dll": {
             "rid": "win10-arm64",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "1.21.0.28"
           },
           "runtimes/win10-arm64/native/Microsoft.CognitiveServices.Speech.extension.mas.dll": {
             "rid": "win10-arm64",

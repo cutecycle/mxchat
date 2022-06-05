@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "umKz3g4iVCSF21Z+w0lL0rAfcBSDC58TzgUPWnoe13ZJnx0LTjqGTR1GA7wDkfdMFyNzY7T+pbzH31qTpJWKBA==",
+  "dgSpecHash": "TrMMYH6sWSRBb7GJD2UagknTKaL7dhhYsbMJbQif65+4NaFyPWvotPCkYYwwEBbBvtWOwrzGF0lz+19bNIyQdA==",
   "success": true,
-  "projectFilePath": "/workspaces/mxchat/mxchat.csproj",
+  "projectFilePath": "C:\\Users\\cc\\source\\repos\\mxchat\\mxchat.csproj",
   "expectedPackageFiles": [
-    "/var/nuget/microsoft.cognitiveservices.speech/1.21.0/microsoft.cognitiveservices.speech.1.21.0.nupkg.sha512"
+    "C:\\Users\\cc\\.nuget\\packages\\microsoft.cognitiveservices.speech\\1.21.0\\microsoft.cognitiveservices.speech.1.21.0.nupkg.sha512"
   ],
   "logs": []
 }
