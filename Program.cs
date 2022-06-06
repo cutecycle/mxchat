@@ -38,6 +38,7 @@ class Program
 		// Console.WriteLine($"RECOGNIZED: Text={result.Text}");
 		return result;
 	}
+	static bool enterMode = false;
 
 	// async static Task<List<VoiceResult>> Listen() { 
 
@@ -102,7 +103,10 @@ class Program
 			// thisTerminalWindow.
 			SendKeys.SendWait(content);
 			// TODO: switch between "pressEnter and manualEdit" modes
-			// SendKeys.SendWait("{ENTER}");
+			if (enterMode)
+			{
+				SendKeys.SendWait("{ENTER}");
+			}
 
 		}
 		catch
@@ -174,6 +178,7 @@ class Program
 			Console.Clear();
 		}
 		catch { }
+
 		Console.WriteLine("we're in!");
 		foreach (KeyValuePair<String, SpeechRecognizer> rec in recognizers)
 		{
@@ -209,6 +214,7 @@ class Program
 								}
 								Console.WriteLine($"[{y.Key}]: {y.Value}");
 							}
+							Console.WriteLine("Press enter when inserting text? " + enterMode);
 							// Console.WriteLine(String.Join("\n", results.Take(8).Select(x => $"{x.Text}").ToList()));
 
 							var mapString = KeyMap(keys, results);
@@ -232,7 +238,7 @@ class Program
 		//var stop = new TaskCompletionSource<int>();
 		//Task read = new Task(() =>
 		//{
-		do
+		while (true)
 		{
 			if (Console.KeyAvailable)
 			{
@@ -248,12 +254,13 @@ class Program
 					{
 						Paste(Txt);
 					});
-
-
+				}
+				if (speakers.Keys.Contains(keyReceived.KeyChar.ToString()))
+				{
+					speakerKey = keyReceived.KeyChar.ToString();
 				}
 			}
 		}
-		while (true);
 		//});
 		//Console.CancelKeyPress += async (s, e) =>
 		//{
