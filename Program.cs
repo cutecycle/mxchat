@@ -13,7 +13,8 @@ class Program
 {
     static List<string> keys = new List<string> {
         "a","s","d","f",
-        "j","k","l",";"
+        "j","k","l",";", 
+		"z","x","c","v"
     };
     class VoiceResult
     {
@@ -50,7 +51,7 @@ class Program
         // new KeyValuePair<String, SpeechRecognitionResult>(result.Text, result)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
         Dictionary<String, SpeechRecognitionResult> keyMap = resultList
-        // .Take(8)
+        .Take(keys.Count())
         .Zip(keyList, (result, key) => new KeyValuePair<String, SpeechRecognitionResult>(key, result))
         .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         // .ToDictionary(kvp => kvp.Item1.Text, kvp => kvp.Item2);
