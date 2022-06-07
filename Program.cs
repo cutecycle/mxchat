@@ -101,7 +101,7 @@ class Program
 			var copy = new Task(
 				[STAThread] () =>
 				{
-
+					RichTextBox formattedContent = new RichTextBox();
 					System.Windows.Clipboard.SetText(content);
 				}
 			);
@@ -161,6 +161,7 @@ class Program
 		SpeechConfig speechConfig;
 		String key = Environment.GetEnvironmentVariable("COGNITIVE_SERVICES_KEY");
 		speakers["q"] = Environment.GetEnvironmentVariable("SPEAKER_NAME");
+		speakers["w"] = Environment.GetEnvironmentVariable("FACILITATOR_NAME");
 		while (key is null)
 		{
 			Console.WriteLine("Paste your Azure Cognitive Services key and press enter:\n");
@@ -223,19 +224,32 @@ class Program
 					String useKey = keyReceived.KeyChar.ToString();
 					Console.WriteLine("received:" + useKey);
 					String line = KeyMap(keys, results)[useKey].Text;
+					bool richTextMode = false;
+					String Txt;
+					if (richTextMode)
+					{
+						Txt =
+						@"{\rtf1\ansi "
+						+ $@"**\b[mxchat]** [{speaker}]\b0:\t "
+						+ @"}";
 
-					String Txt = $"**[mxchat]** [{speaker}]:\t "
-					+ line;
+					}
+					else
+					{
+						Txt = $"[mxchat] [{speaker}]: ";
+					}
+					Txt += line;
 
 					var thread = new Thread(() =>
 					{
-						Clipboard.SetText(Txt);
+						Clipboard.SetText(Txt, TextDataFormat.Rtf);
 					});
 					thread
-					.SetApartmentState(ApartmentState.STA);
+						.SetApartmentState(ApartmentState.STA);
 					thread
-					.Start();
-					thread.Join();
+						.Start();
+					thread
+						.Join();
 					lastCopied = Txt;
 					updateUI();
 				}
