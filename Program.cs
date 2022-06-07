@@ -96,26 +96,13 @@ class Program
 		catch
 		{
 			Console.WriteLine("Couldn't return to the console window. quick, alt-tab it!");
-			//SetForegroundWindow(thisTerminalWindow);
+			// SetForegroundWindow(thisTerminalWindow);
 		}
 		try
 		{
-			// thisTerminalWindow.
-
-
-			// SendKeys.SendWait(content);
-			// TODO: switch between "pressEnter and manualEdit" modes
-			var copy = new Task(
-				[STAThread] () =>
-				{
-					RichTextBox formattedContent = new RichTextBox();
-					System.Windows.Clipboard.SetText(content);
-				}
-			);
-			Task.WaitAll(copy);
 			if (enterMode)
 			{
-				// SendKeys.SendWait("{ENTER}");
+				SendKeys.SendWait("{ENTER}");
 			}
 
 		}
@@ -124,11 +111,7 @@ class Program
 			Console.WriteLine("Couldn't paste.");
 			Console.WriteLine(e);
 		}
-		//SetForegroundWindow(thisTerminalWindow);
-
 	}
-
-
 	static void updateUI()
 	{
 		try
@@ -153,7 +136,19 @@ class Program
 		}
 		Console.ResetColor();
 		// Console.WriteLine("Press enter when inserting text? " + enterMode);
-		Console.WriteLine("Last line copied: " + lastCopied.Substring(0, Math.Min(lastCopied.Length, 40)) + "...");
+		int MaxLength = 90;
+		Console.WriteLine(
+			"Last line copied: " +
+			lastCopied
+				.Substring(
+					0,
+					Math.Min(lastCopied.Length, MaxLength)
+				) +
+				(lastCopied.Length > MaxLength ?
+					"..." :
+					""
+				)
+		);
 
 		var mapString = KeyMap(keys, results);
 		Console.WriteLine("\nRecent Lines:\n");
@@ -229,43 +224,66 @@ class Program
 				if (keys.Contains(keyReceived.KeyChar.ToString()))
 				{
 					//TODO 
+					String useKey = keyReceived.KeyChar.ToString();
+
+					Console.WriteLine("received:" + useKey);
+					String line;
 					try
 					{
-						String useKey = keyReceived.KeyChar.ToString();
-						Console.WriteLine("received:" + useKey);
-						String line = KeyMap(keys, results)[useKey].Text;
-						bool richTextMode = false;
-						String Txt;
-						if (richTextMode)
-						{
-							Txt =
-							@"{\rtf1\ansi "
-							+ $@"**\b[mxchat]** [{speaker}]\b0:\t "
-							+ @"}";
-
-						}
-						else
-						{
-							Txt = $"[mxchat] [{speaker}]: ";
-						}
-						Txt += line;
-						var thread = new Thread(() =>
-						{
-							Clipboard.SetText(Txt, TextDataFormat.Rtf);
-						});
-						thread
-							.SetApartmentState(ApartmentState.STA);
-						thread
-							.Start();
-						thread
-							.Join();
-						lastCopied = Txt;
-						updateUI();
+						line = KeyMap(keys, results)[useKey].Text;
 					}
 					catch
 					{
-						Console.WriteLine("Couldn't copy to clipboard.");
+						line = "There was no line available in that register.";
 					}
+					bool richTextMode = false;
+					String Txt;
+					String unfancyText;
+					// if (richTextMode)
+					// {
+					// 	Txt =
+					// 	@"{\rtf1\ansi "
+					// 	+ $@"**\b[mxchat]** [{speaker}]\b0:\t "
+					// 	+ @"}";
+					// 	unfancyText = $"{roles[speakerKey]} [{speakers[speakerKey]}]: ";
+
+					// }
+					// else
+					// {
+					Txt = @$"
+						Version:0.9
+						StartHTML:000125
+						EndHTML:000260
+						StartFragment:000209
+						EndFragment:000222
+						<HTML>
+						<head>
+						<title>HTML clipboard</title>
+						</head>
+						<body>
+						<!–StartFragment–>
+							<i>[mxchat]: {roles[speakerKey]}</i> <b>[{speakers[speakerKey]}]</b>: 	
+						<!–EndFragment–>
+						</body>
+						</html>
+						";
+					unfancyText = $"[mxchat]: {roles[speakerKey]} [{speakers[speakerKey]}]: ";
+					// }
+					Txt += line;
+					unfancyText += line;
+
+					var thread = new Thread( () =>
+					{
+						Clipboard.SetText(unfancyText);
+					});
+					thread
+						.SetApartmentState(ApartmentState.STA);
+					thread
+						.Start();
+					thread
+						.Join();
+					lastCopied = unfancyText;
+					updateUI();
 				}
 				if (roles.Keys.Contains(keyReceived.KeyChar.ToString()))
 				{
