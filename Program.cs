@@ -149,9 +149,10 @@ class Program
 			{
 				Console.ResetColor();
 			}
-			Console.WriteLine($"[{y.Key}]: {(speakers[y.Key] == y.Value ? $"({speakers[y.Key]})" : "")} ({y.Value})");
+			Console.WriteLine($"[{y.Key}]:\t({y.Value})\t{(speakers[y.Key] == y.Value ? "" : $"({speakers[y.Key]})")}");
 		}
-		Console.WriteLine("Press enter when inserting text? " + enterMode);
+		Console.ResetColor();
+		// Console.WriteLine("Press enter when inserting text? " + enterMode);
 		Console.WriteLine("Last line copied: " + lastCopied.Substring(0, Math.Min(lastCopied.Length, 40)) + "...");
 
 		var mapString = KeyMap(keys, results);
@@ -228,37 +229,43 @@ class Program
 				if (keys.Contains(keyReceived.KeyChar.ToString()))
 				{
 					//TODO 
-					String useKey = keyReceived.KeyChar.ToString();
-					Console.WriteLine("received:" + useKey);
-					String line = KeyMap(keys, results)[useKey].Text;
-					bool richTextMode = false;
-					String Txt;
-					if (richTextMode)
+					try
 					{
-						Txt =
-						@"{\rtf1\ansi "
-						+ $@"**\b[mxchat]** [{speaker}]\b0:\t "
-						+ @"}";
+						String useKey = keyReceived.KeyChar.ToString();
+						Console.WriteLine("received:" + useKey);
+						String line = KeyMap(keys, results)[useKey].Text;
+						bool richTextMode = false;
+						String Txt;
+						if (richTextMode)
+						{
+							Txt =
+							@"{\rtf1\ansi "
+							+ $@"**\b[mxchat]** [{speaker}]\b0:\t "
+							+ @"}";
 
+						}
+						else
+						{
+							Txt = $"[mxchat] [{speaker}]: ";
+						}
+						Txt += line;
+						var thread = new Thread(() =>
+						{
+							Clipboard.SetText(Txt, TextDataFormat.Rtf);
+						});
+						thread
+							.SetApartmentState(ApartmentState.STA);
+						thread
+							.Start();
+						thread
+							.Join();
+						lastCopied = Txt;
+						updateUI();
 					}
-					else
+					catch
 					{
-						Txt = $"[mxchat] [{speaker}]: ";
+						Console.WriteLine("Couldn't copy to clipboard.");
 					}
-					Txt += line;
-
-					var thread = new Thread(() =>
-					{
-						Clipboard.SetText(Txt, TextDataFormat.Rtf);
-					});
-					thread
-						.SetApartmentState(ApartmentState.STA);
-					thread
-						.Start();
-					thread
-						.Join();
-					lastCopied = Txt;
-					updateUI();
 				}
 				if (roles.Keys.Contains(keyReceived.KeyChar.ToString()))
 				{
