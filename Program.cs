@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
 
 class Program
 {
@@ -16,33 +17,24 @@ class Program
 		"j","k","l",";",
 		"z","x","c","v"
 	};
-	class VoiceResult
-	{
-		readonly String Speaker;
-		readonly String RecognitionTime;
-		readonly String Content;
-		readonly String Source; // todo: make enum
-		readonly SpeechRecognitionResult CognitiveServicesResponse;
+	static bool enterMode = false;
+	static ConcurrentStack<SpeechRecognitionResult> results = new ConcurrentStack<SpeechRecognitionResult>();
+	static ConcurrentStack<String> events = new ConcurrentStack<String>();
+	static Dictionary<String, String> speakers = new Dictionary<string, string>{
+			{"q", "Speaker"},
+			{"w", "Facilitator"},
+			{"e", "Participant"},
+			{"r", "Other"}
+		};
+	static String speakerKey = "q";
+	static String lastCopied = "";
 
-	}
 
-	class VoiceResults
-	{
-		Dictionary<String, VoiceResult> RecognitionHistory;
-	}
 	async static Task<SpeechRecognitionResult> Recognize(SpeechRecognizer recognizer)
 	{
-		//Asks user for mic input and prints transcription result on screen
-		// Console.WriteLine("Speak into your microphone.");
 		SpeechRecognitionResult result = await recognizer.RecognizeOnceAsync();
-		// Console.WriteLine($"RECOGNIZED: Text={result.Text}");
 		return result;
 	}
-	static bool enterMode = false;
-
-	// async static Task<List<VoiceResult>> Listen() { 
-
-	// }
 	static Dictionary<String, SpeechRecognitionResult> KeyMap(List<String> keyList, ConcurrentStack<SpeechRecognitionResult> results)
 	{
 		// Dictionary<String, SpeechRecognitionResult> keyMap = new Dictionary<String, SpeechRecognitionResult>();
@@ -90,6 +82,7 @@ class Program
 		try
 		{
 			var thisTerminalWindow = Process.GetCurrentProcess().MainWindowHandle;
+			Console.WriteLine("entering text in " + targetWindow.ToString());
 			//send string to the target window and press enter
 			SetForegroundWindow(targetWindow);
 		}
@@ -101,61 +94,88 @@ class Program
 		try
 		{
 			// thisTerminalWindow.
-			SendKeys.SendWait(content);
+
+
+			// SendKeys.SendWait(content);
 			// TODO: switch between "pressEnter and manualEdit" modes
+			var copy = new Task(
+				[STAThread] () =>
+				{
+
+					System.Windows.Clipboard.SetText(content);
+				}
+			);
+			Task.WaitAll(copy);
 			if (enterMode)
 			{
-				SendKeys.SendWait("{ENTER}");
+				// SendKeys.SendWait("{ENTER}");
 			}
 
 		}
-		catch
+		catch (Exception e)
 		{
 			Console.WriteLine("Couldn't paste.");
+			Console.WriteLine(e);
 		}
 		//SetForegroundWindow(thisTerminalWindow);
 
 	}
 
 
-	static ConcurrentStack<SpeechRecognitionResult> results = new ConcurrentStack<SpeechRecognitionResult>();
-	static ConcurrentStack<String> events = new ConcurrentStack<String>();
-	static Dictionary<String, String> speakers = new Dictionary<string, string>{
-			{"q", "Speaker"},
-			{"w", "Facilitator"},
-			{"e", "Participant"},
-			{"r", "Other"}
-		};
-	static String speakerKey = "q";
-	[STAThread]
+	static void updateUI()
+	{
+		try
+		{
+			Console.Clear();
+		}
+		catch { }
+		// Console.WriteLine($"latest result result from {rec.Key}: {e.Result.Text}\n\n\n");
+
+		Console.WriteLine("Prepend Text with:\n");
+		foreach (var y in speakers)
+		{
+			if (speakerKey == y.Key)
+			{
+				Console.BackgroundColor = ConsoleColor.Green;
+			}
+			else
+			{
+				Console.ResetColor();
+			}
+			Console.WriteLine($"[{y.Key}]: {y.Value}");
+		}
+		Console.WriteLine("Press enter when inserting text? " + enterMode);
+		Console.WriteLine("Last line copied: " + lastCopied.Substring(0, Math.Min(lastCopied.Length, 40)) + "...");
+
+		var mapString = KeyMap(keys, results);
+		Console.WriteLine("\nRecent Lines:\n");
+		foreach (var x in mapString)
+		{
+			Console.WriteLine($"[{x.Key}]:\t {x.Value.Text} ()\n\n");
+		}
+
+	}
+	static String speaker = "";
 	async static Task Main(string[] args)
 	{
-		// String key = Environment.GetEnvironmentVariable("COGNITIVE_SERVICES_KEY");
-		Console.WriteLine("Paste your Azure Cognitive Services key and press enter:\n");
-		String key = Console.ReadLine();
-		if (key is null)
+		SpeechConfig speechConfig;
+		String key = Environment.GetEnvironmentVariable("COGNITIVE_SERVICES_KEY");
+		speakers["q"] = Environment.GetEnvironmentVariable("SPEAKER_NAME");
+		while (key is null)
 		{
-			throw new ArgumentNullException("oof");
+			Console.WriteLine("Paste your Azure Cognitive Services key and press enter:\n");
+			key = Console.ReadLine();
+			try
+			{
+				speechConfig = SpeechConfig.FromSubscription(key, "eastus");
+				speechConfig.OutputFormat = OutputFormat.Detailed;
+			}
+			catch
+			{
+				key = null;
+			}
 		}
-		SpeechConfig speechConfig = SpeechConfig.FromSubscription(key, "eastus")
-
-		;
-		speechConfig.OutputFormat = OutputFormat.Detailed;
-		// using AudioConfig speaker = AudioConfig.FromDefaultSpeakerOutput();
-		// using AudioConfig mic = AudioConfig.FromDefaultMicrophoneInput();
-		// using SfromSpeakerOutputRecognizer = new SpeechRecognizer(speechConfig, speaker);
 		List<KeyValuePair<String, SpeechRecognizer>> recognizers =
-		// (
-		// 	(new List<AudioConfig>
-		// 		{
-		// 			speaker,
-		// 			mic
-		// 		}
-		// 	)
-		// 	.Select(config =>
-		// 		new SpeechRecognizer(speechConfig, config)
-		// 	)
-		// )
 		(new List<KeyValuePair<String, SpeechRecognizer>>
 		{
 			new KeyValuePair<String,SpeechRecognizer>(
@@ -165,79 +185,33 @@ class Program
 					AudioConfig.FromDefaultMicrophoneInput()
 				)
 			)
-			// ,
-			// new KeyValuePair<String,SpeechRecognizer>("mic", new SpeechRecognizer(SpeechConfig.FromSubscription(key, "eastus"), AudioConfig.FromDefaultMicrophoneInput()))
 		});
 
-		// .Properties.SetProperty("SpeechResultFormat", "Detailed"))
-		// .ToList();
-		// Parallel.ForEach(recognizers, (SpeechRecognizer rec) =>
-		// {
 		try
 		{
 			Console.Clear();
 		}
 		catch { }
+		updateUI();
 
-		Console.WriteLine("we're in!");
 		foreach (KeyValuePair<String, SpeechRecognizer> rec in recognizers)
 		{
-			// rec.Value.OutputFormat = OutputFormat.Detailed;
 			await rec.Value.StartContinuousRecognitionAsync();
 			rec.Value.Recognized += (
 				(s, e) =>
 					{
-
-
 						if (e.Result.Reason == ResultReason.RecognizedSpeech)
 						{
-							// var confidence = e.Result.Best().First().Confidence;
-
 							results.Push(e.Result);
-							try
-							{
-								Console.Clear();
-							}
-							catch { }
-							// Console.WriteLine($"latest result result from {rec.Key}: {e.Result.Text}\n\n\n");
-
-							Console.WriteLine("Prepend Text with:\n");
-							foreach (var y in speakers)
-							{
-								if (speakerKey == y.Key)
-								{
-									Console.BackgroundColor = ConsoleColor.Green;
-								}
-								else
-								{
-									Console.ResetColor();
-								}
-								Console.WriteLine($"[{y.Key}]: {y.Value}");
-							}
-							Console.WriteLine("Press enter when inserting text? " + enterMode);
-							// Console.WriteLine(String.Join("\n", results.Take(8).Select(x => $"{x.Text}").ToList()));
-
-							var mapString = KeyMap(keys, results);
-							Console.WriteLine("\nRecent Lines:\n");
-							foreach (var x in mapString)
-							{
-								Console.WriteLine($"[{x.Key}]:\t {x.Value.Text} ()\n\n");
-							}
-
-							// Console.WriteLine(String.Join("\n", events.ToArray()));
+							updateUI();
 						}
 						else
 						{
-							// status.Enqueue()
-							// status
 							events.Append(e.Result.Reason.ToString());
 						}
 					}
 				);
 		}
-		//var stop = new TaskCompletionSource<int>();
-		//Task read = new Task(() =>
-		//{
 		while (true)
 		{
 			if (Console.KeyAvailable)
@@ -246,46 +220,32 @@ class Program
 				if (keys.Contains(keyReceived.KeyChar.ToString()))
 				{
 					//TODO 
-					String line = KeyMap(keys, results)[keyReceived.KeyChar.ToString()].Text;
-					String Txt = "**[mxchat]** [speaker]:\t "
+					String useKey = keyReceived.KeyChar.ToString();
+					Console.WriteLine("received:" + useKey);
+					String line = KeyMap(keys, results)[useKey].Text;
+
+					String Txt = $"**[mxchat]** [{speaker}]:\t "
 					+ line;
 
-					Task doit = Task.Run(() =>
+					var thread = new Thread(() =>
 					{
-						Paste(Txt);
+						Clipboard.SetText(Txt);
 					});
+					thread
+					.SetApartmentState(ApartmentState.STA);
+					thread
+					.Start();
+					thread.Join();
+					lastCopied = Txt;
+					updateUI();
 				}
 				if (speakers.Keys.Contains(keyReceived.KeyChar.ToString()))
 				{
+					speaker = speakers[keyReceived.KeyChar.ToString()];
 					speakerKey = keyReceived.KeyChar.ToString();
+					updateUI();
 				}
 			}
 		}
-		//});
-		//Console.CancelKeyPress += async (s, e) =>
-		//{
-		//    e.Cancel = true;
-		//    stop.SetResult(0);
-		//    foreach (var rec in recognizers)
-		//    {
-		//        // await rec.Value.StopContinuousRecognitionAsync();
-		//        //await rec.Value.StopContinuousRecognitionAsync();
-		//    }
-		//};
-		//Task.WaitAny(stop.Task, read);
-
-
-		// Dictionary<string, VoiceResult> board;
-
-		// while (true)
-		// {
-		// 	await Recognize(recognizer);
-		// }
-
-		// on a loop, listen for audio input. then, immediately place the result in the queue and listen again.
-		// await fromSpeakerOutputRecognizer.StartContinuousRecognitionAsync();
-		// https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/how-to-recognize-speech?pivots=programming-language-csharp#use-continuous-recognition
-		// on a loop, map each result to a keyboard key. limit the number of results to 8. 
-		// if there are more than 8 results, then discard the oldest result.
 	}
 }
