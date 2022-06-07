@@ -20,6 +20,13 @@ class Program
 	static bool enterMode = false;
 	static ConcurrentStack<SpeechRecognitionResult> results = new ConcurrentStack<SpeechRecognitionResult>();
 	static ConcurrentStack<String> events = new ConcurrentStack<String>();
+	//todo: valuetuple?
+	static Dictionary<String, String> roles = new Dictionary<string, string>{
+			{"q", "Speaker"},
+			{"w", "Facilitator"},
+			{"e", "Participant"},
+			{"r", "Other"}
+		};
 	static Dictionary<String, String> speakers = new Dictionary<string, string>{
 			{"q", "Speaker"},
 			{"w", "Facilitator"},
@@ -132,7 +139,7 @@ class Program
 		// Console.WriteLine($"latest result result from {rec.Key}: {e.Result.Text}\n\n\n");
 
 		Console.WriteLine("Prepend Text with:\n");
-		foreach (var y in speakers)
+		foreach (var y in roles)
 		{
 			if (speakerKey == y.Key)
 			{
@@ -142,7 +149,7 @@ class Program
 			{
 				Console.ResetColor();
 			}
-			Console.WriteLine($"[{y.Key}]: {y.Value}");
+			Console.WriteLine($"[{y.Key}]: {(speakers[y.Key] == y.Value ? $"({speakers[y.Key]})" : "")} ({y.Value})");
 		}
 		Console.WriteLine("Press enter when inserting text? " + enterMode);
 		Console.WriteLine("Last line copied: " + lastCopied.Substring(0, Math.Min(lastCopied.Length, 40)) + "...");
@@ -160,8 +167,8 @@ class Program
 	{
 		SpeechConfig speechConfig;
 		String key = Environment.GetEnvironmentVariable("COGNITIVE_SERVICES_KEY");
-		speakers["q"] = Environment.GetEnvironmentVariable("SPEAKER_NAME");
-		speakers["w"] = Environment.GetEnvironmentVariable("FACILITATOR_NAME");
+		roles["q"] = Environment.GetEnvironmentVariable("SPEAKER_NAME");
+		roles["w"] = Environment.GetEnvironmentVariable("FACILITATOR_NAME");
 		while (key is null)
 		{
 			Console.WriteLine("Paste your Azure Cognitive Services key and press enter:\n");
@@ -253,9 +260,9 @@ class Program
 					lastCopied = Txt;
 					updateUI();
 				}
-				if (speakers.Keys.Contains(keyReceived.KeyChar.ToString()))
+				if (roles.Keys.Contains(keyReceived.KeyChar.ToString()))
 				{
-					speaker = speakers[keyReceived.KeyChar.ToString()];
+					speaker = roles[keyReceived.KeyChar.ToString()];
 					speakerKey = keyReceived.KeyChar.ToString();
 					updateUI();
 				}
